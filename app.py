@@ -685,7 +685,7 @@ def toggle_ticket(ticket_id):
     # Убедись, что название маршрута 'view_ticket' совпадает с твоим (иногда называют 'ticket_detail')
     return redirect(url_for('view_ticket', ticket_id=ticket.id))
 
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+if __name__ == "__main__":
+    # Хост 0.0.0.0 обязателен, чтобы сервер слушал внешние запросы
+    # Порт 80 — стандарт для Amvera
+    app.run(host='0.0.0.0', port=80)
