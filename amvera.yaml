@@ -9,3 +9,4 @@ build:
 
 run:
   script: app.py
+  containerDir: /app
