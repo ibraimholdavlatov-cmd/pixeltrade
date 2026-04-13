@@ -2,8 +2,8 @@
     --bg-main: #0a0c0f;
     --bg-card: #161a1f;
     --bg-light: #1f252c;
-    --primary: #3b82f6; /* Яркий синий */
-    --accent: #00ff88;  /* Неоновый зеленый для цен и онлайн-статуса */
+    --primary: #3b82f6;
+    --accent: #00ff88;
     --text-main: #ffffff;
     --text-sec: #94a3b8;
     --border: #2d3748;
@@ -17,6 +17,7 @@ body {
     font-family: 'Inter', -apple-system, sans-serif;
     margin: 0;
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 /* --- Шапка (Header) --- */
@@ -81,6 +82,8 @@ header h1 a {
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .products-grid li:hover {
@@ -94,6 +97,7 @@ header h1 a {
     height: 200px;
     object-fit: cover;
     border-bottom: 1px solid var(--border);
+    background-color: #1a1a1a;
 }
 
 .product-link {
@@ -104,6 +108,7 @@ header h1 a {
 
 .product-info {
     padding: 20px;
+    flex-grow: 1;
 }
 
 .product-info strong {
@@ -140,6 +145,8 @@ button, .btn {
     width: 100%;
     text-transform: uppercase;
     font-size: 13px;
+    text-align: center;
+    text-decoration: none;
 }
 
 button:hover {
@@ -179,14 +186,22 @@ button:hover {
     align-self: flex-end;
     border-bottom-right-radius: 2px;
 }
+
 /* Геро-секция */
 .hero {
-    background: linear-gradient(45deg, #161a1f 0%, #0b0e11 100%);
-    border: 1px solid var(--border);
+    position: relative;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 20px;
-    padding: 60px 40px;
-    margin-bottom: 40px;
-    text-align: center;
+    overflow: hidden;
+    margin-bottom: 30px;
+    background-image: url("/static/images/hero-bg.png"); 
+    background-repeat: no-repeat;
+    background-position: center 20%;
+    background-size: cover;
+    background-color: #1a1c23;
 }
 
 .hero h1 {
@@ -210,7 +225,7 @@ button:hover {
 /* Категории */
 .categories {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 15px;
     margin-bottom: 40px;
 }
@@ -223,6 +238,8 @@ button:hover {
     text-align: center;
     cursor: pointer;
     transition: 0.3s;
+    text-decoration: none;
+    color: white;
 }
 
 .category-card:hover {
@@ -243,11 +260,20 @@ button:hover {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .product-img-container {
     position: relative;
     height: 180px;
+}
+
+.product-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .category-tag {
@@ -274,6 +300,7 @@ button:hover {
     width: 20px;
     height: 20px;
     border-radius: 50%;
+    object-fit: cover;
 }
 
 .online-dot {
@@ -291,10 +318,6 @@ button:hover {
     margin-top: 15px;
 }
 
-.buy-mini-btn {
-    width: 40px !important;
-    padding: 10px !important;
-}
 /* Контейнер чата */
 .chat-container {
     max-width: 900px;
@@ -304,7 +327,7 @@ button:hover {
     border: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    height: 70vh; /* Фиксированная высота */
+    height: 70vh;
 }
 
 .chat-header {
@@ -315,25 +338,6 @@ button:hover {
     gap: 15px;
 }
 
-.status-online {
-    color: var(--accent);
-    font-size: 12px;
-    text-transform: uppercase;
-    font-weight: bold;
-}
-
-/* Окно сообщений */
-.chat-window {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    background: #0d1117; /* Чуть темнее фон для контраста */
-}
-
-/* Ряд сообщения */
 .message-row {
     display: flex;
     gap: 12px;
@@ -341,384 +345,46 @@ button:hover {
     max-width: 80%;
 }
 
-.message-row.mine {
-    align-self: flex-end;
-}
+.message-row.mine { align-self: flex-end; }
+.message-row.theirs { align-self: flex-start; }
 
-.message-row.theirs {
-    align-self: flex-start;
-}
-
-/* АВАТАРКА — теперь строго 35px */
 .chat-avatar {
     width: 35px;
     height: 35px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--border);
-    flex-shrink: 0; /* Чтобы не сжималась */
+    flex-shrink: 0;
 }
 
-/* Пузырь сообщения */
 .message-bubble {
     padding: 12px 18px;
     border-radius: 18px;
-    font-size: 15px; /* Хороший читаемый размер */
-    line-height: 1.4;
+    font-size: 15px;
     word-wrap: break-word;
 }
 
-.mine .message-bubble {
-    background: var(--primary);
-    color: white;
-    border-bottom-right-radius: 4px;
-}
+.mine .message-bubble { background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+.theirs .message-bubble { background: var(--bg-light); color: var(--text-main); border-bottom-left-radius: 4px; }
 
-.theirs .message-bubble {
-    background: var(--bg-light);
-    color: var(--text-main);
-    border-bottom-left-radius: 4px;
-}
-
-.message-time {
-    display: block;
-    font-size: 10px;
-    color: var(--text-sec);
-    margin-top: 5px;
-    text-align: right;
-}
-
-/* Зона ввода */
-.chat-input-area {
-    padding: 20px;
-    display: flex;
-    gap: 10px;
-    border-top: 1px solid var(--border);
-}
-
-.chat-input-area input {
-    flex: 1;
-    background: var(--bg-light);
-    border: 1px solid var(--border);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 25px;
-    outline: none;
-}
-
-.chat-input-area button {
-    width: 50px !important;
-    height: 45px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-/* Контейнер списка чатов */
+/* Чат-список */
 .chat-list-container {
     max-width: 800px;
     margin: 0 auto;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    overflow: hidden;
-}
-
-.chat-list-header {
-    padding: 20px 25px;
-    background: var(--bg-light);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.chat-count {
-    font-size: 12px;
-    color: var(--text-sec);
-    background: var(--bg-main);
-    padding: 4px 12px;
-    border-radius: 20px;
-}
-
-/* Элемент списка */
-.chat-item-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    transition: 0.2s;
-}
-
-.chat-item-link:not(:last-child) {
-    border-bottom: 1px solid var(--border);
-}
-
-.chat-item-link:hover {
-    background: var(--bg-light);
-}
-
-.chat-item {
-    padding: 15px 25px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-/* Аватар в списке */
-.chat-item-avatar {
-    position: relative;
-    width: 50px;
-    height: 50px;
-    flex-shrink: 0;
 }
 
 .chat-item-avatar img {
-    width: 100%;
-    height: 100%;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--border);
 }
 
-.online-status-dot {
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 12px;
-    height: 12px;
-    background: var(--accent);
-    border: 2px solid var(--bg-card);
-    border-radius: 50%;
-}
-
-/* Инфо текста */
-.chat-item-info {
-    flex: 1;
-    min-width: 0; /* Нужно для сокращения длинного текста */
-}
-
-.chat-item-top {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 4px;
-}
-
-.chat-user-name {
-    font-weight: 700;
-    color: var(--text-main);
-}
-
-.chat-last-time {
-    font-size: 11px;
-    color: var(--text-sec);
-}
-
-.chat-preview {
-    font-size: 13px;
-    color: var(--text-sec);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 0;
-}
-
-.chat-item-action {
-    color: var(--border);
-    transition: 0.3s;
-}
-
-.chat-item-link:hover .chat-item-action {
-    color: var(--primary);
-    transform: translateX(5px);
-}
-
-/* Пустое состояние */
-.empty-chats {
-    padding: 60px;
-    text-align: center;
-    color: var(--text-sec);
-}
-
-.empty-chats i {
-    font-size: 50px;
-    margin-bottom: 20px;
-    opacity: 0.3;
-}
-/* Макет страницы товара */
-.product-page {
-    display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 30px;
-    margin-top: 20px;
-}
-
-/* Левая сторона */
-.main-image-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 10px;
-    cursor: zoom-in;
-}
-
-.main-image-card img {
-    width: 100%;
-    border-radius: 8px;
-    display: block;
-}
-
-/* Правая сторона (Сайдбар) */
-.product-header-info {
-    margin-bottom: 25px;
-}
-
-.product-title {
-    font-size: 28px;
-    font-weight: 800;
-    margin-bottom: 10px;
-    line-height: 1.2;
-}
-
-.product-meta {
-    display: flex;
-    gap: 15px;
-    color: var(--text-sec);
-    font-size: 13px;
-    margin-bottom: 20px;
-}
-
-.product-price {
-    font-size: 36px;
-    font-weight: 900;
-    color: var(--accent);
-}
-
-/* Карточка продавца */
-.seller-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    margin-bottom: 25px;
-    overflow: hidden;
-}
-
-.seller-header {
-    background: var(--bg-light);
-    padding: 10px 20px;
-    font-size: 12px;
-    text-transform: uppercase;
-    font-weight: bold;
-    color: var(--text-sec);
-}
-
-.seller-body {
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.seller-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 2px solid var(--primary);
-}
-
-.seller-name {
-    display: block;
-    font-weight: 700;
-    font-size: 18px;
-}
-
-.seller-status {
-    font-size: 12px;
-    color: var(--accent);
-}
-
-.seller-actions {
-    padding: 0 20px 20px;
-}
-
-.btn-chat {
-    background: var(--bg-light) !important;
-    border: 1px solid var(--border) !important;
-}
-
-.btn-chat:hover {
-    border-color: var(--primary) !important;
-}
-
-/* Кнопки покупки */
-.buy-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.btn-large {
-    padding: 18px !important;
-    font-size: 16px !important;
-}
-
-.btn-secondary {
-    background: transparent !important;
-    border: 1px solid var(--primary) !important;
-    color: var(--primary) !important;
-}
-
-/* Описание снизу */
-.product-description-section {
-    margin-top: 40px;
-    background: var(--bg-card);
-    padding: 30px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-}
-
-.product-description-section h3 {
-    margin-top: 0;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 15px;
-    margin-bottom: 15px;
-}
-
-.description-text {
-    color: var(--text-sec);
-    white-space: pre-line;
-}
-
-/* Адаптивность для мобилок */
-@media (max-width: 900px) {
-    .product-page {
-        grid-template-columns: 1fr;
-    }
-}
-/* Dashboard Layout */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.welcome-text h1 {
-    font-size: 32px;
-    font-weight: 800;
-    margin: 0;
-}
-
-.welcome-text p {
-    color: var(--text-sec);
-    margin: 5px 0 0;
-}
-
-.btn-add-product {
-    width: auto !important;
-    padding: 12px 25px !important;
-}
-
-/* Stats Cards */
+/* Dashboard */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -728,56 +394,12 @@ button:hover {
 
 .stat-card {
     background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
     padding: 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
     display: flex;
     align-items: center;
-    gap: 20px;
-}
-
-.stat-icon {
-    font-size: 24px;
-    color: var(--primary);
-    background: rgba(59, 130, 246, 0.1);
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-}
-
-.stat-label {
-    display: block;
-    font-size: 13px;
-    color: var(--text-sec);
-}
-
-.stat-value {
-    display: block;
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--text-main);
-}
-
-/* Dashboard Table */
-.dashboard-section {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-}
-
-.section-header {
-    padding: 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-light);
-}
-
-.section-header h2 {
-    font-size: 18px;
-    margin: 0;
+    gap: 15px;
 }
 
 .dashboard-table {
@@ -785,321 +407,13 @@ button:hover {
     border-collapse: collapse;
 }
 
-.dashboard-table th {
-    text-align: left;
-    padding: 15px 20px;
-    color: var(--text-sec);
-    font-size: 13px;
-    text-transform: uppercase;
-    background: rgba(0,0,0,0.2);
-}
-
-.dashboard-table td {
-    padding: 15px 20px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-}
-
-.table-product-cell {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.table-thumb {
-    width: 45px;
-    height: 45px;
-    border-radius: 8px;
-    object-fit: cover;
-}
-
-.table-product-title {
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.table-price {
-    font-weight: 700;
-    color: var(--accent);
-}
-
-.table-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.action-btn {
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    transition: 0.2s;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-}
-
-.action-btn.view { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
-.action-btn.delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-
-.action-btn:hover { filter: brightness(1.3); transform: translateY(-2px); }
-
-.empty-table {
-    text-align: center;
-    padding: 50px !important;
-    color: var(--text-sec);
-}
-
-.empty-table i { font-size: 40px; margin-bottom: 15px; opacity: 0.2; }
-/* Контейнер авторизации */
-.auth-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 200px);
-}
-
-.auth-box {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 40px;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    box-shadow: var(--shadow);
-}
-
-.auth-icon {
-    width: 60px;
-    height: 60px;
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    margin: 0 auto 20px;
-}
-
-.auth-subtitle {
-    color: var(--text-sec);
-    font-size: 14px;
-    margin-bottom: 30px;
-}
-
-/* Поля ввода с иконками */
-.input-field {
-    position: relative;
-    margin-bottom: 15px;
-}
-
-.input-field i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-sec);
-    font-size: 14px;
-}
-
-.input-field input {
-    width: 100%;
-    padding: 12px 15px 12px 45px !important; /* Отступ слева для иконки */
-    background: var(--bg-light);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: white;
-    outline: none;
-    transition: 0.3s;
-}
-
-.input-field input:focus {
-    border-color: var(--primary);
-    background: #252d37;
-}
-
-.error-bubble {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 13px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.auth-footer {
-    margin-top: 25px;
-    font-size: 14px;
-    color: var(--text-sec);
-}
-
-.auth-footer a {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.auth-footer a:hover {
-    text-decoration: underline;
-}
-/* --- Новый Поиск и Фильтры --- */
-
-.search-container {
-    margin-bottom: 30px;
-    background: var(--bg-card); /* Используем цвет карточки */
+.dashboard-table td, .dashboard-table th {
     padding: 15px;
-    border-radius: 16px;
-    border: 1px solid var(--border); /* Тонкая рамка */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Мягкая тень */
-}
-
-.search-form {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-/* Обёртки для инпутов с иконками */
-.search-input-wrapper,
-.select-wrapper {
-    position: relative;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-}
-
-/* Иконки внутри полей */
-.search-icon,
-.select-icon {
-    position: absolute;
-    left: 15px;
-    color: var(--text-sec); /* Вторичный цвет текста */
-    pointer-events: none; /* Чтобы клик проходил сквозь иконку */
-    z-index: 2;
-}
-
-/* Стилизация полей ввода и селекта */
-.modern-input,
-.modern-select {
-    width: 100%;
-    background: var(--bg-light); /* Цвет фона ввода */
-    border: 2px solid transparent; /* Прозрачная рамка для фокуса */
-    color: var(--text-main); /* Основной цвет текста */
-    padding: 12px 15px 12px 45px; /* Отступ слева для иконки */
-    border-radius: 12px;
-    outline: none;
-    font-family: inherit;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-/* Эффекты при наведении и фокусе */
-.modern-input:hover,
-.modern-select:hover {
-    background: #2a323c; /* Чуть светлее при наведении */
-}
-
-.modern-input:focus,
-.modern-select:focus {
-    border-color: var(--primary); /* Цвет твоего бренда (синий/зеленый) при фокусе */
-    background: var(--bg-card);
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); /* Легкое свечение */
-}
-
-/* Специфика селекта */
-.select-wrapper {
-    flex-grow: 0;
-    min-width: 180px;
-}
-.modern-select {
-    cursor: pointer;
-    appearance: none; /* Убираем стандартную стрелку браузера */
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 15px center;
-    background-size: 16px;
-    padding-right: 40px;
-}
-
-/* Кнопка сброса */
-.reset-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 45px;
-    height: 45px;
-    background: rgba(239, 68, 68, 0.1); /* Полупрозрачный красный */
-    color: #ef4444; /* Красный текст */
-    border-radius: 12px;
-    text-decoration: none;
-    transition: 0.3s;
-    flex-shrink: 0;
-}
-
-.reset-btn:hover {
-    background: #ef4444;
-    color: white;
-    transform: rotate(90deg); /* Прикольный эффект поворота */
-}
-
-/* Адаптив для мобильных */
-@media (max-width: 768px) {
-    .search-form {
-        flex-direction: column;
-    }
-    .search-input-wrapper,
-    .select-wrapper,
-    .reset-btn {
-        width: 100%;
-    }
-    .select-wrapper {
-        min-width: auto;
-    }
-}
-.profile-container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-
-.profile-card {
-    background: var(--bg-card);
-    border-radius: 20px;
-    padding: 30px;
-    border: 1px solid var(--border);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-.profile-header {
-    margin-bottom: 30px;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 20px;
+    text-align: left;
 }
 
-.profile-main-section {
-    display: flex;
-    gap: 40px;
-}
-
-.avatar-upload-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-.avatar-preview-container {
-    position: relative;
-    width: 150px;
-    height: 150px;
-}
-
+/* Профиль */
 .large-avatar {
     width: 150px;
     height: 150px;
@@ -1108,241 +422,66 @@ button:hover {
     border: 4px solid var(--primary);
 }
 
-.upload-badge {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    background: var(--primary);
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
+.profile-main-section {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: 3px solid var(--bg-card);
-    transition: 0.3s;
+    gap: 40px;
 }
 
-.upload-badge:hover { transform: scale(1.1); }
-
-.profile-inputs { flex-grow: 1; }
-
-.input-group { margin-bottom: 20px; }
-
-.input-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--text-sec);
-    font-size: 14px;
-}
-
-.modern-textarea {
-    width: 100%;
-    height: 120px;
-    background: var(--bg-light);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px;
-    color: var(--text-main);
-    resize: none;
-}
-
-.btn-save {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    width: 100%;
-    transition: 0.3s;
-}
-
-.btn-save:hover { filter: brightness(1.2); }
-
-@media (max-width: 600px) {
-    .profile-main-section { flex-direction: column; align-items: center; }
-}
-/* Компактная картинка в деталях товара */
-.detail-img {
-    width: 100%;
-    max-height: 450px; /* Ограничиваем высоту, чтобы не была огромной */
-    object-fit: contain; /* Картинка не растягивается и не обрезается */
-    background: #1a1a1a;
-    border-radius: 15px;
-}
-
-/* Аккуратные карточки на главной */
-.product-item {
-    background: var(--bg-card);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.2s;
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    height: 100%; /* Делает все карточки одной высоты */
-}
-
-.product-img-container {
-    height: 180px; /* Фиксированная высота для превью */
-    position: relative;
-}
-
-.product-img-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Заполняет область без искажений */
-}
-
-.product-info {
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.product-title {
-    font-size: 15px;
-    line-height: 1.4;
-    margin-bottom: 10px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Обрезает текст до 2 строк */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    height: 42px; /* Фиксирует место под текст */
-}
-
-.category-tag {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: rgba(0,0,0,0.7);
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-}
-/* Контейнер для категорий */
-.categories {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
-}
-
-/* Стили самой карточки категории */
-.category-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 10px;
-    background: var(--bg-card, #1e1e1e); /* Твой цвет фона карточки */
-    border: 1px solid var(--border, #333);
-    border-radius: 12px;
-    text-decoration: none !important; /* Убираем подчеркивание */
-    color: white !important;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-/* Иконка внутри карточки */
-.category-card i {
-    font-size: 24px;
-    margin-bottom: 10px;
-    color: var(--primary, #007bff); /* Твой основной акцентный цвет */
-}
-
-/* Текст внутри карточки */
-.category-card span {
-    font-size: 14px;
-    font-weight: 500;
-}
-
-/* Эффект при наведении */
-.category-card:hover {
-    transform: translateY(-5px);
-    background: var(--bg-light, #2a2a2a);
-    border-color: var(--primary, #007bff);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-/* Стиль для активной категории (когда она выбрана) */
-.category-card.active {
-    background: var(--primary, #007bff);
-    border-color: var(--primary, #007bff);
-}
-.category-card.active i, .category-card.active span {
-    color: white !important;
-}
-.hero {
-    position: relative;
-    height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 20px;
-    overflow: hidden;
+/* Поиск */
+.search-container {
     margin-bottom: 30px;
-    /* Путь БЕЗ начального слэша, если CSS и папка images лежат в одной папке static */
-    background-image: url("images/hero-bg.png"); 
-    background-repeat: no-repeat;
-    background-position: center 20%;
-    background-size: cover;
-    background-color: #1a1c23; /* Если картинка не найдется, будет этот цвет */
+    background: var(--bg-card);
+    padding: 15px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
 }
 
-.hero-overlay {
-    position: absolute;
-    top: 0; 
-    left: 0; 
-    right: 0; 
-    bottom: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
-    z-index: 1;
-}
+.search-form { display: flex; gap: 12px; }
 
-.hero-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
+.modern-input, .modern-select {
+    width: 100%;
+    background: var(--bg-light);
+    border: 1px solid transparent;
     color: white;
+    padding: 12px 15px 12px 40px;
+    border-radius: 12px;
+    outline: none;
 }
-/* МОБИЛЬНАЯ АДАПТАЦИЯ */
+
+/* --- МОБИЛЬНАЯ АДАПТАЦИЯ (ФИНАЛ) --- */
 @media (max-width: 768px) {
-    /* Уменьшаем шрифты в баннере */
-    .hero {
-        height: 250px;
-        border-radius: 15px;
-    }
-    .hero h1 { font-size: 1.8rem; }
-    .hero p { font-size: 0.9rem; }
-    .hero-stats { display: none; } /* На телефоне лишние детали лучше скрыть */
-
-    /* Делаем поиск на всю ширину */
-    .search-form {
+    nav.menu {
+        padding: 0 15px;
         flex-direction: column;
+        height: auto;
+        padding-bottom: 10px;
     }
-    .search-input-wrapper, .modern-select, .reset-btn {
-        width: 100%;
-    }
-
-    /* Категории делаем в два столбца или скролл */
-    .categories {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-
-    /* Скрываем текст в навигации, оставляем иконки */
-    .nav-right a span { display: none; }
+    header h1 a { font-size: 18px; line-height: 50px; }
+    .container { margin: 15px auto; padding: 0 10px; }
     
-    /* Сетка товаров в два ряда (самое удобное для телефона) */
+    .hero { height: 220px; border-radius: 15px; }
+    .hero h1 { font-size: 22px; }
+    .hero-stats { display: none; }
+
+    .search-form { flex-direction: column; }
+    
+    .categories { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    
+    /* Сетка товаров 2 в ряд */
     .products-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 10px !important;
     }
-    .product-img-container { height: 130px !important; }
-    .product-title { font-size: 14px !important; height: 38px !important; }
+    .products-grid li img { height: 130px; }
+    .product-info { padding: 10px; }
+    .product-info strong { font-size: 14px; height: 35px; overflow: hidden; }
+    .price-tag { font-size: 16px; }
+
+    .profile-main-section { flex-direction: column; align-items: center; text-align: center; }
+    
+    .chat-container { height: 85vh; }
+    .product-page { grid-template-columns: 1fr; }
+    
+    .dashboard-section { overflow-x: auto; }
+    .dashboard-table { min-width: 500px; }
 }
