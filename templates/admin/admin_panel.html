@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Панель управления — PixelTrade{% endblock %}
+
+{% block content %}
+<div style="padding-top: 40px;">
+    <h2 style="font-weight: 900; margin-bottom: 30px;">
+        <i class="fas fa-shield-alt" style="color: #5352ed;"></i> Панель Администратора
+    </h2>
+
+    <div style="display: flex; gap: 20px; border-bottom: 1px solid var(--border); margin-bottom: 30px;">
+        <button onclick="showTab('tickets')" class="tab-btn active" id="btn-tickets">Тикеты (Поддержка)</button>
+        {% if current_user.username == 'mersiyan' %}
+        <button onclick="showTab('staff')" class="tab-btn" id="btn-staff">Управление персоналом</button>
+        {% endif %}
+    </div>
+
+    <div id="tab-tickets" class="tab-content">
+        <div style="margin-bottom: 20px; max-width: 450px;">
+            <form action="{{ url_for('admin_panel') }}" method="GET" style="display: flex; gap: 10px;">
+                <input type="text" name="search" placeholder="Поиск по ID, теме или нику..." value="{{ search_query or '' }}"
+                       style="flex: 1; padding: 12px; background: var(--bg-light); border: 1px solid var(--border); border-radius: 10px; color: #fff;">
+                <button type="submit" class="manage-btn" style="border: none; cursor: pointer; padding: 0 20px;">Найти</button>
+            </form>
+        </div>
+
+        <div style="background: var(--bg-light); border-radius: 20px; border: 1px solid var(--border); overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border);">
+                        <th style="padding: 15px 20px;">ID</th>
+                        <th style="padding: 15px 20px;">Тема</th>
+                        <th style="padding: 15px 20px;">Пользователь</th>
+                        <th style="padding: 15px 20px;">Статус</th>
+                        <th style="padding: 15px 20px;">Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets %}
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.02);">
+                        <td style="padding: 15px 20px; color: var(--text-sec);">#{{ ticket.id }}</td>
+                        <td style="padding: 15px 20px; font-weight: 600;">{{ ticket.subject }}</td>
+                        <td style="padding: 15px 20px;">{{ ticket.user.username }}</td>
+                        <td style="padding: 15px 20px;">
+                            <span class="status-badge {{ ticket.status.lower() }}">
+                                {{ ticket.status }}
+                            </span>
+                        </td>
+                        <td style="padding: 15px 20px;">
+                            <a href="{{ url_for('view_ticket', ticket_id=ticket.id) }}" class="manage-btn">Ответить</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" style="padding: 30px; text-align: center; color: var(--text-sec);">Тикеты не найдены</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if current_user.username == 'mersiyan' %}
+    <div id="tab-staff" class="tab-content" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; align-items: start;">
+            
+            <div style="background: var(--bg-light); padding: 30px; border-radius: 20px; border: 1px solid var(--border);">
+                <h3 style="margin-bottom: 25px; font-size: 18px; font-weight: 700;">Назначить администратора</h3>
+                <form action="{{ url_for('promote_user') }}" method="POST" style="display: flex; gap: 10px;">
+                    <input type="text" name="username" placeholder="Никнейм пользователя" required 
+                           style="flex: 1; height: 48px; padding: 0 15px; background: #111217; border: 1px solid var(--border); border-radius: 12px; color: #fff; outline: none;">
+                    <button type="submit" class="btn-primary" style="height: 48px; background: #5352ed; color: #fff; border: none; padding: 0 25px; border-radius: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                        Дать права
+                    </button>
+                </form>
+            </div>
+
+            <div style="background: var(--bg-light); padding: 25px; border-radius: 20px; border: 1px solid var(--border);">
+                <h3 style="margin-bottom: 15px; font-size: 18px; font-weight: 700;">Текущий состав</h3>
+                <div id="staff-list" style="max-height: 300px; overflow-y: auto;">
+                    {% for person in staff %}
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <span style="font-weight: 600; color: #fff;">{{ person.username }}</span>
+                        <span class="status-badge {% if person.username == 'mersiyan' %}answered{% else %}open{% endif %}" style="font-size: 9px; min-width: 70px; text-align: center;">
+                            {{ person.role }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .tab-btn { background: none; border: none; color: var(--text-sec); padding: 15px 25px; cursor: pointer; font-weight: 700; font-size: 15px; border-bottom: 2px solid transparent; transition: 0.2s; }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .status-badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .status-badge.open { background: rgba(46, 204, 113, 0.1); color: #2ecc71; }
+    .status-badge.answered { background: rgba(83, 82, 237, 0.1); color: #5352ed; }
+    .status-badge.closed { background: rgba(255, 255, 255, 0.05); color: #888; }
+    .manage-btn { background: #fff; color: #000; text-decoration: none; padding: 10px 15px; border-radius: 8px; font-size: 12px; font-weight: 700; display: inline-block; transition: 0.2s; }
+    .manage-btn:hover { background: var(--primary); color: #fff; }
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+</style>
+
+<script>
+    function showTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tabName).style.display = 'block';
+        document.getElementById('btn-' + tabName).classList.add('active');
+    }
+</script>
+{% endblock %}

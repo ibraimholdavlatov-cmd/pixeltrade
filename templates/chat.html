@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="chat-header">
+        <a href="{{ url_for('chat_list') }}" class="back-link"><i class="fas fa-chevron-left"></i></a>
+        
+        {# Определяем, кто наш собеседник #}
+        {% set interlocutor = chat.user2 if chat.user1_id == current_user.id else chat.user1 %}
+        
+        {# Ссылка на профиль собеседника #}
+        <a href="{{ url_for('public_profile', user_id=interlocutor.id) }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+            <img src="{{ url_for('static', filename='avatars/' + interlocutor.avatar) }}" class="chat-avatar" style="width: 40px; height: 40px;">
+            <div>
+                <h2 style="margin: 0; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+                    {{ interlocutor.username }}
+                    {% if interlocutor.username == 'mersiyan' %}
+                        <span style="background: #ff4757; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase;">Owner</span>
+                    {% elif interlocutor.role == 'admin' %}
+                        <span style="background: #5352ed; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase;">Admin</span>
+                    {% endif %}
+                </h2>
+                <span class="status-online" style="font-size: 12px; opacity: 0.8;">онлайн</span>
+            </div>
+        </a>
+    </div>
+
+    <div class="chat-window" id="chatWindow">
+        {% for msg in messages %}
+            {% if msg.sender %}
+                {% set is_mine = (msg.sender_id == current_user.id) %}
+                <div class="message-row {% if is_mine %}mine{% else %}theirs{% endif %}">
+                    {% if not is_mine %}
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                            <img src="{{ url_for('static', filename='avatars/' + msg.sender.avatar) }}" class="chat-avatar">
+                            {% if msg.sender.username == 'mersiyan' %}
+                                <span style="color: #ff4757; font-size: 8px; font-weight: 900;">OWNER</span>
+                            {% elif msg.sender.role == 'admin' %}
+                                <span style="color: #5352ed; font-size: 8px; font-weight: 900;">ADMIN</span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            {{ msg.text }}
+                        </div>
+                        <span class="message-time">{{ msg.timestamp.strftime('%H:%M') }}</span>
+                    </div>
+
+                    {% if is_mine %}
+                        <img src="{{ url_for('static', filename='avatars/' + current_user.avatar) }}" class="chat-avatar">
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="system-message-container">
+                    <div class="system-message-bubble">
+                        <i class="fas fa-info-circle"></i> {{ msg.text }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <form class="chat-input-area" method="POST" action="{{ url_for('chat', chat_id=chat.id) }}">
+        <input type="text" name="text" placeholder="Введите сообщение..." autocomplete="off" required>
+        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+    </form>
+</div>
+
+<style>
+    /* Стили для системного сообщения */
+    .system-message-container {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+        width: 100%;
+    }
+    .system-message-bubble {
+        background: rgba(var(--primary-rgb), 0.1);
+        border: 1px solid var(--border);
+        color: var(--text-sec);
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-size: 13px;
+        max-width: 80%;
+        text-align: center;
+    }
+    .system-message-bubble i {
+        margin-right: 8px;
+        color: var(--primary);
+    }
+    
+    .chat-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--border);
+    }
+
+    /* Улучшение заголовка для кликабельности */
+    .chat-header a:hover h2 {
+        color: var(--primary);
+        transition: 0.2s;
+    }
+</style>
+
+<script>
+    const chatWindow = document.getElementById('chatWindow');
+    if (chatWindow) {
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+</script>
+{% endblock %}

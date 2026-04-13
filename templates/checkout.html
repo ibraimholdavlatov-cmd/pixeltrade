@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 500px; margin: 60px auto; padding: 30px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; text-align: center;">
+    <h2 style="margin-bottom: 10px;">Оформление заказа</h2>
+    <p style="color: var(--text-sec); margin-bottom: 30px;">Вы покупаете: <strong>{{ product.short_description }}</strong></p>
+    
+    <div style="font-size: 32px; font-weight: 800; color: var(--primary); margin-bottom: 30px;">
+        {{ product.price | format_price }}
+    </div>
+
+    <form action="{{ url_for('confirm_payment', product_id=product.id) }}" method="POST">
+        <div style="display: grid; gap: 12px; margin-bottom: 30px; text-align: left;">
+            <label class="pay-option">
+                <input type="radio" name="payment_method" value="Банковская карта" checked>
+                <div class="pay-box"><i class="fas fa-credit-card"></i> Банковская карта</div>
+            </label>
+            <label class="pay-option">
+                <input type="radio" name="payment_method" value="СБП">
+                <div class="pay-box"><i class="fas fa-mobile-alt"></i> Система быстрых платежей</div>
+            </label>
+            <label class="pay-option">
+                <input type="radio" name="payment_method" value="Криптовалюта">
+                <div class="pay-box"><i class="fab fa-bitcoin"></i> Криптовалюта (USDT)</div>
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 16px;">
+            Подтвердить и оплатить
+        </button>
+    </form>
+</div>
+
+<style>
+    .pay-option input { display: none; }
+    .pay-box { 
+        padding: 15px; border: 1px solid var(--border); border-radius: 12px; 
+        cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 15px;
+    }
+    .pay-option input:checked + .pay-box { 
+        border-color: var(--primary); background: rgba(var(--primary-rgb), 0.1); color: var(--primary);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,443 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .dashboard-container { 
+        padding: 30px 0; 
+        max-width: 850px; 
+        margin: 0 auto; 
+        position: relative;
+    }
+    
+    /* Обновленная шапка профиля */
+    .profile-header-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 30px;
+        background: var(--bg-card);
+        padding: 25px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .profile-avatar-big {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--primary);
+    }
+
+    .profile-info-main h1 { margin: 0; font-size: 24px; color: #fff; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    
+    .role-badge {
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .role-owner { background: #ff4757; color: #fff; }
+    .role-admin { background: #5352ed; color: #fff; }
+
+    .mini-reviews-trigger {
+        background: rgba(var(--primary-rgb), 0.1);
+        color: var(--primary);
+        border: 1px solid var(--border);
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: 0.2s;
+    }
+    .mini-reviews-trigger:hover { background: var(--primary); color: #000; }
+
+    /* Блок статистики справа */
+    .header-stats-right {
+        display: flex;
+        gap: 15px;
+    }
+
+    .header-stat-item {
+        text-align: right;
+        padding-left: 15px;
+        border-left: 1px solid var(--border);
+    }
+
+    .header-stat-item label { display: block; font-size: 11px; color: var(--text-sec); text-transform: uppercase; margin-bottom: 4px; }
+    .header-stat-item span { font-size: 18px; font-weight: 800; color: #fff; }
+
+    /* Панель управления */
+    .action-group {
+        display: flex;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 40px;
+    }
+    
+    .action-btn {
+        flex: 1;
+        padding: 20px 5px;
+        text-align: center;
+        text-decoration: none !important;
+        color: #fff;
+        transition: 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-right: 1px solid var(--border);
+        cursor: pointer;
+        background: none;
+    }
+    .action-btn:last-child { border-right: none; }
+    .action-btn:hover { background: rgba(255, 255, 255, 0.05); }
+    .action-btn i { font-size: 20px; color: var(--primary); }
+    .action-btn span { font-weight: 600; font-size: 13px; color: var(--text-sec); }
+
+    /* Модальное окно */
+    .reviews-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85);
+        backdrop-filter: blur(10px);
+        z-index: 2000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: 0.3s;
+    }
+    .reviews-modal {
+        background: var(--bg-card);
+        width: 100%;
+        max-width: 500px;
+        max-height: 80vh;
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        transform: translateY(30px);
+        transition: 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+    .reviews-overlay.active { display: flex; opacity: 1; }
+    .reviews-overlay.active .reviews-modal { transform: translateY(0); }
+
+    .modal-header { 
+        padding: 20px 25px; 
+        border-bottom: 1px solid var(--border); 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+    }
+
+    .close-modal { 
+        background: rgba(255,255,255,0.05); 
+        border: none; 
+        color: #fff; 
+        width: 32px; 
+        height: 32px; 
+        border-radius: 50%; 
+        cursor: pointer; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+        padding: 0;
+        line-height: 1;
+    }
+    .close-modal:hover { background: #ff4d4d; color: white; }
+
+    .reviews-list-container { padding: 20px; overflow-y: auto; flex-grow: 1; }
+    
+    .mini-review-item {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        animation: slideUp 0.4s ease forwards;
+        opacity: 0;
+    }
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-more { width: 100%; padding: 12px; background: none; border: 1px dashed var(--border); color: var(--primary); cursor: pointer; border-radius: 10px; }
+
+    /* Инвентарь */
+    .inventory-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .product-row { display: flex; align-items: center; padding: 20px 25px; gap: 25px; border-bottom: 1px solid var(--border); }
+    
+    /* ИНТЕРАКТИВНЫЕ СТАТУСЫ */
+    .status-badge-btn {
+        font-size: 10px;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-weight: 800;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        outline: none;
+    }
+    .status-badge-btn:hover { transform: translateY(-1px); filter: brightness(1.2); }
+    .status-badge-btn:active { transform: scale(0.95); }
+
+    .status-active { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border-color: rgba(46, 204, 113, 0.2); }
+    .status-sold { background: rgba(255, 193, 7, 0.1); color: #ffc107; border-color: rgba(255, 193, 7, 0.2); cursor: default; }
+    .status-hidden { background: rgba(255, 255, 255, 0.05); color: var(--text-sec); border-color: var(--border); }
+    
+    .action-icon-btn {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.05);
+        color: var(--text-sec);
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: 0.2s;
+        text-decoration: none;
+    }
+    .action-icon-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); }
+    .btn-delete:hover { background: #ff4d4d !important; color: #fff !important; border-color: #ff4d4d !important; }
+
+    /* Универсальное подтверждение (под стиль сайта) */
+    .confirm-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+        z-index: 9999; display: none; align-items: center; justify-content: center;
+    }
+    .confirm-modal {
+        background: var(--bg-card); padding: 30px; border-radius: 20px;
+        border: 1px solid var(--border); text-align: center; max-width: 400px;
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="profile-header-box">
+        <div class="header-left">
+            <img src="{{ url_for('static', filename='avatars/' + current_user.avatar) }}" class="profile-avatar-big">
+            <div class="profile-info-main">
+                <h1>
+                    {{ current_user.username }}
+                    {% if current_user.username == 'mersiyan' %}
+                        <span class="role-badge role-owner">Owner</span>
+                    {% elif current_user.role == 'admin' %}
+                        <span class="role-badge role-admin">Admin</span>
+                    {% endif %}
+                    <button class="mini-reviews-trigger" onclick="openReviews()">
+                        <i class="fas fa-star"></i> {{ display_rating if display_rating else '0.0' }}
+                    </button>
+                </h1>
+                <div style="color: var(--text-sec); font-size: 14px; margin-top: 5px;">
+                    Баланс: <span style="color: var(--primary); font-weight: bold;">{{ current_user.balance | format_price }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header-stats-right">
+            <div class="header-stat-item">
+                <label>Товаров</label>
+                <span>{{ products_count }}</span>
+            </div>
+            <div class="header-stat-item">
+                <label>Ценность</label>
+                <span>{{ total_value | format_price }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-group">
+        <a href="{{ url_for('sell') }}" class="action-btn">
+            <i class="fas fa-plus-circle"></i>
+            <span>Выставить</span>
+        </a>
+        <a href="{{ url_for('my_purchases') }}" class="action-btn">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Покупки</span>
+        </a>
+        <a href="{{ url_for('my_sales') }}" class="action-btn">
+            <i class="fas fa-hand-holding-usd"></i>
+            <span>Продажи</span>
+        </a>
+        <a href="{{ url_for('profile') }}" class="action-btn">
+            <i class="fas fa-user-cog"></i>
+            <span>Настройки</span>
+        </a>
+    </div>
+
+    <div class="inventory-section">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-boxes" style="margin-right: 10px; color: var(--primary);"></i> Ваши товары</h3>
+        <div class="inventory-card">
+            {% for product in products %}
+            <div class="product-row">
+                <div style="width: 80px; height: 80px; flex-shrink: 0; position: relative;">
+                    <img src="{{ url_for('static', filename='product_images/' + product.image) }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px; border: 1px solid var(--border);">
+                </div>
+                <div style="flex-grow: 1;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 5px;">
+                        <h4 style="margin: 0; color: #fff;">{{ product.short_description }}</h4>
+                        
+                        {% if product.status == 'sold' %}
+                            <div class="status-badge-btn status-sold">
+                                <i class="fas fa-check-double"></i> Продан
+                            </div>
+                        {% else %}
+                            <form action="{{ url_for('toggle_status', product_id=product.id) }}" method="POST" style="margin:0;">
+                                <button type="submit" class="status-badge-btn {{ 'status-active' if product.status == 'active' else 'status-hidden' }}" 
+                                        title="{{ 'Нажмите, чтобы скрыть товар' if product.status == 'active' else 'Нажмите, чтобы активировать товар' }}">
+                                    <i class="fas {{ 'fa-eye' if product.status == 'active' else 'fa-eye-slash' }}"></i>
+                                    {{ 'Активен' if product.status == 'active' else 'Скрыт' }}
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                    <span style="color: var(--primary); font-weight: 800;">{{ product.price | format_price }}</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="action-icon-btn" title="Посмотреть на сайте">
+                        <i class="fas fa-external-link-alt" style="font-size: 14px;"></i>
+                    </a>
+
+                    <a href="{{ url_for('edit_product', product_id=product.id) }}" class="action-icon-btn" title="Редактировать">
+                        <i class="fas fa-pen" style="font-size: 14px;"></i>
+                    </a>
+
+                    <form id="delete-form-{{ product.id }}" action="{{ url_for('delete_product', product_id=product.id) }}" method="POST" style="margin:0;">
+                        <button type="button" class="action-icon-btn btn-delete" title="Удалить" onclick="showConfirmDelete({{ product.id }})">
+                            <i class="fas fa-trash-alt" style="font-size: 14px;"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-modal">
+        <h3 style="color: #fff; margin-top: 0;">Удаление товара</h3>
+        <p style="color: var(--text-sec); font-size: 14px;">Вы уверены, что хотите удалить этот товар? Это действие нельзя отменить.</p>
+        <div style="display: flex; gap: 10px; margin-top: 25px;">
+            <button class="btn-more" style="border-style: solid; color: #fff;" onclick="hideConfirmDelete()">Отмена</button>
+            <button class="btn-more" style="background: #ff4d4d; border: none; color: #fff;" id="confirmDeleteBtn">Удалить</button>
+        </div>
+    </div>
+</div>
+
+<div class="reviews-overlay" id="reviewsOverlay" onclick="closeReviews(event)">
+    <div class="reviews-modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 style="margin: 0;"><i class="fas fa-star" style="color: #ffc107;"></i> Отзывы о вас</h3>
+            <button class="close-modal" onclick="document.getElementById('reviewsOverlay').classList.remove('active')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="reviews-list-container" id="reviewsList">
+            <div id="reviewsSpinner" style="text-align: center; color: var(--text-sec); padding: 20px;">Загрузка...</div>
+        </div>
+        <div style="padding: 15px; border-top: 1px solid var(--border);" id="moreBtnRow">
+            <button class="btn-more" onclick="loadMoreReviews()">Показать еще</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* Логика кастомного удаления */
+    let productToDelete = null;
+    function showConfirmDelete(id) {
+        productToDelete = id;
+        document.getElementById('confirmOverlay').style.display = 'flex';
+    }
+    function hideConfirmDelete() {
+        document.getElementById('confirmOverlay').style.display = 'none';
+    }
+    document.getElementById('confirmDeleteBtn').onclick = function() {
+        if(productToDelete) document.getElementById('delete-form-' + productToDelete).submit();
+    };
+
+    /* Остальная логика */
+    let currentOffset = 0;
+    const limit = 10;
+
+    function openReviews() {
+        document.getElementById('reviewsOverlay').classList.add('active');
+        if (currentOffset === 0) {
+            loadReviews();
+        }
+    }
+
+    function closeReviews(e) {
+        if (e.target.id === 'reviewsOverlay') {
+            document.getElementById('reviewsOverlay').classList.remove('active');
+        }
+    }
+
+    async function loadReviews() {
+        const list = document.getElementById('reviewsList');
+        const moreBtn = document.getElementById('moreBtnRow');
+        try {
+            const response = await fetch(`/api/my-reviews?offset=${currentOffset}`);
+            const data = await response.json();
+            if (currentOffset === 0) list.innerHTML = '';
+            if (data.reviews.length < limit) {
+                moreBtn.style.display = 'none';
+            } else {
+                moreBtn.style.display = 'block';
+            }
+            if (currentOffset === 0 && data.reviews.length === 0) {
+                list.innerHTML = '<div style="text-align: center; color: var(--text-sec); padding: 40px;">Отзывов пока нет</div>';
+                return;
+            }
+            data.reviews.forEach((rev, index) => {
+                const div = document.createElement('div');
+                div.className = 'mini-review-item';
+                div.style.animationDelay = (index * 0.05) + 's';
+                let stars = '⭐'.repeat(rev.rating);
+                div.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <strong style="color: var(--primary)">${rev.buyer}</strong>
+                        <span style="font-size: 12px;">${stars}</span>
+                    </div>
+                    <div style="font-size: 14px; color: #eee;">${rev.text || '<i>Без текста</i>'}</div>
+                    <div style="font-size: 11px; color: var(--text-sec); margin-top: 8px; text-align: right;">${rev.date}</div>
+                `;
+                list.appendChild(div);
+            });
+        } catch (e) {
+            list.innerHTML = '<div style="color: #ff4d4d; text-align: center;">Ошибка загрузки</div>';
+        }
+    }
+
+    function loadMoreReviews() {
+        currentOffset += limit;
+        loadReviews();
+    }
+</script>
+{% endblock %}

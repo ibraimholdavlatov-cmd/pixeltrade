@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PixelTrade — Маркетплейс игровых ценностей{% endblock %}</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='favicon.jpg') }}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Стили кнопки панели в шапке */
+        .admin-nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            transition: 0.2s;
+            letter-spacing: 0.5px;
+            margin-left: 10px; /* Отступ от кнопки Помощь */
+        }
+        
+        .btn-owner { 
+            background: rgba(255, 71, 87, 0.1); 
+            color: #ff4757; 
+            border: 1px solid rgba(255, 71, 87, 0.3);
+        }
+        .btn-owner:hover {
+            background: #ff4757;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.4);
+        }
+
+        .btn-admin { 
+            background: rgba(83, 82, 237, 0.1); 
+            color: #5352ed; 
+            border: 1px solid rgba(83, 82, 237, 0.3);
+        }
+        .btn-admin:hover {
+            background: #5352ed;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(83, 82, 237, 0.4);
+        }
+
+        /* Логотип */
+        .logo-link { text-decoration: none !important; color: inherit !important; display: flex; align-items: center; transition: 0.3s; }
+        .logo-link:hover { opacity: 0.8; transform: scale(1.02); }
+        .logo-link h1 { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 900; color: #fff; }
+        .logo-link i { color: var(--primary); }
+
+        /* --- ВЫПАДАЮЩИЙ СПИСОК --- */
+        .help-dropdown {
+            position: relative;
+            margin-left: 20px;
+            display: inline-block;
+        }
+
+        .help-trigger {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 7px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        .help-trigger:hover { background: var(--bg-light); border-color: var(--primary); }
+
+        .help-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 10px;
+            background: #1a1c23;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            min-width: 210px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .help-menu.active { display: block !important; }
+
+        .help-menu-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #fff !important;
+            text-decoration: none !important;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .help-menu-item:last-child { border-bottom: none; }
+        .help-menu-item:hover { background: rgba(255, 255, 255, 0.1); color: var(--primary) !important; }
+        .help-menu-item i { color: var(--primary); width: 18px; text-align: center; }
+
+        /* Уведомления */
+        .flash-container { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+        .flash-message { background: var(--primary); color: #000; padding: 15px 25px; border-radius: 12px; font-weight: 700; animation: slideIn 0.3s ease-out forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="menu">
+            <div class="nav-left" style="display: flex; align-items: center;">
+                <a href="{{ url_for('index') }}" class="logo-link">
+                    <h1><i class="fas fa-bolt"></i> PixelTrade</h1>
+                </a>
+                
+                <div class="help-dropdown">
+                    <button class="help-trigger" id="helpTrigger">
+                        <i class="fas fa-question-circle"></i> Помощь
+                    </button>
+                    <div class="help-menu" id="helpMenu">
+                        <a href="{{ url_for('rules') }}" class="help-menu-item">
+                            <i class="fas fa-file-contract"></i>
+                            <span>Правила сайта</span>
+                        </a>
+                        <a href="{{ url_for('support') }}" class="help-menu-item">
+                            <i class="fas fa-headset"></i>
+                            <span>Связаться с нами</span>
+                        </a>
+                    </div>
+                </div>
+
+                {% if current_user.is_authenticated %}
+                    {% if current_user.username == 'mersiyan' %}
+                        <a href="{{ url_for('owner_panel') }}" class="admin-nav-link btn-owner">
+                            <i class="fas fa-crown"></i> Владелец
+                        </a>
+                    {% elif current_user.role == 'admin' %}
+                        <a href="{{ url_for('admin_panel') }}" class="admin-nav-link btn-admin">
+                            <i class="fas fa-shield-alt"></i> Админ
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+            
+            <div class="nav-right" style="display: flex; align-items: center; gap: 25px;">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('index') }}" style="text-decoration: none; color: var(--text-sec); font-weight: 500;"><i class="fas fa-search"></i> Поиск</a>
+                    <a href="{{ url_for('chat_list') }}" style="text-decoration: none; color: var(--text-sec); font-weight: 500;"><i class="fas fa-comment-dots"></i> Чаты</a>
+                    <a href="{{ url_for('profile_center') }}" style="display: flex; align-items: center; text-decoration: none; color: #fff;">
+                        <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--primary); margin-right: 8px;">
+                            <img src="{{ url_for('static', filename='avatars/' + (current_user.avatar if current_user.avatar else 'default.png')) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        {{ current_user.username }}
+                    </a>
+                    <a href="{{ url_for('logout') }}" style="color: var(--text-sec); opacity: 0.5;"><i class="fas fa-sign-out-alt"></i></a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" style="text-decoration: none; color: #fff; font-weight: 600;">Войти</a>
+                    <a href="{{ url_for('register') }}" style="background: var(--primary); color: #000; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-weight: 700;">Регистрация</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="flash-container">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="flash-message"><i class="fas fa-check-circle"></i> <span>{{ message }}</span></div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+        </div>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--border); text-align: center; color: var(--text-sec);">
+        <p>&copy; 2026 PixelTrade. Безопасный маркетплейс игровых ценностей.</p>
+    </footer>
+
+    <script>
+        const trigger = document.getElementById('helpTrigger');
+        const menu = document.getElementById('helpMenu');
+
+        trigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            menu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!menu.contains(e.target) && e.target !== trigger) {
+                menu.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const flashes = document.querySelectorAll('.flash-message');
+            flashes.forEach(f => {
+                setTimeout(() => {
+                    f.style.opacity = '0';
+                    f.style.transition = '0.5s';
+                    setTimeout(() => f.remove(), 500);
+                }, 4000);
+            });
+        });
+    </script>
+</body>
+</html>

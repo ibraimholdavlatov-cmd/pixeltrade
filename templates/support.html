@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Центр поддержки — PixelTrade{% endblock %}
+
+{% block content %}
+<div class="support-page" style="max-width: 1000px; margin: 40px auto; padding: 0 20px;">
+    
+    <div style="display: grid; grid-template-columns: 1fr 350px; gap: 30px; align-items: start;">
+        
+        <div class="support-form-container">
+            <h2 style="font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 10px;">Тикет-система</h2>
+            <p style="color: var(--text-sec); margin-bottom: 30px;">Опишите проблему, и мы создадим обращение для модераторов.</p>
+
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 30px;">
+                <form action="{{ url_for('create_ticket') }}" method="POST" style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="form-group">
+                        <label style="color: #fff; display: block; margin-bottom: 8px; font-size: 14px;">Категория</label>
+                        <select name="category" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 10px; outline: none;">
+                            <option value="Арбитраж">Арбитраж (Проблема со сделкой)</option>
+                            <option value="Финансы">Финансы (Пополнение/Вывод)</option>
+                            <option value="Технический вопрос">Технический вопрос</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color: #fff; display: block; margin-bottom: 8px; font-size: 14px;">Тема</label>
+                        <input type="text" name="subject" required placeholder="Краткое название проблемы" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 10px; box-sizing: border-box;">
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color: #fff; display: block; margin-bottom: 8px; font-size: 14px;">Подробное описание</label>
+                        <textarea name="message" rows="6" required placeholder="Введите текст сообщения..." style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 10px; resize: vertical; box-sizing: border-box;"></textarea>
+                    </div>
+
+                    <button type="submit" class="back-link" style="border: none; cursor: pointer; justify-content: center; width: 100%;">
+                        <i class="fas fa-plus"></i> Открыть тикет
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="tickets-sidebar">
+            <h3 style="font-size: 18px; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-history" style="color: var(--primary);"></i> Ваши обращения
+            </h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                {% if tickets %}
+                    {% for ticket in tickets %}
+                    <a href="/ticket/{{ ticket.id }}" style="text-decoration: none; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 15px; border-radius: 12px; transition: 0.3s; display: block;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: var(--primary); font-size: 12px; font-weight: 700;">#{{ ticket.id }}</span>
+                            <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: {% if ticket.status == 'Open' %}#f1c40f{% else %}#2ecc71{% endif %}; color: #000;">
+                                {{ ticket.status }}
+                            </span>
+                        </div>
+                        <div style="color: #fff; font-size: 14px; font-weight: 600; margin-bottom: 5px;">{{ ticket.subject }}</div>
+                        <div style="color: var(--text-sec); font-size: 11px;">{{ ticket.created_at.strftime('%d.%m.%Y') }}</div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 30px; border: 1px dashed var(--border); border-radius: 15px; color: var(--text-sec); font-size: 13px;">
+                        У вас пока нет открытых тикетов
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 50px;">
+        <a href="{{ url_for('index') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> На главную страницу
+        </a>
+    </div>
+</div>
+
+<style>
+    .back-link {
+        text-decoration: none;
+        color: var(--primary);
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 25px;
+        background: rgba(var(--primary-rgb), 0.1);
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+    .back-link:hover { background: var(--primary); color: #000; }
+    
+    select option { background: #1a1a1a; color: #fff; }
+</style>
+{% endblock %}

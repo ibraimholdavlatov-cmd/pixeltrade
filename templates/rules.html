@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Правила сообщества — PixelTrade{% endblock %}
+
+{% block content %}
+<div class="rules-page" style="max-width: 1000px; margin: 40px auto; padding: 0 20px;">
+    <div class="rules-header" style="text-align: center; margin-bottom: 50px;">
+        <i class="fas fa-balance-scale" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;"></i>
+        <h2 style="font-size: 32px; font-weight: 800; color: #fff;">Правила</h2>
+        <p style="color: var(--text-sec); font-size: 16px;">Регламент взаимодействия пользователей на платформе PixelTrade.</p>
+    </div>
+
+    <div class="rules-list" style="display: flex; flex-direction: column; gap: 40px;">
+        <div class="info-item" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 20px; border-radius: 15px;">
+            <p style="color: var(--text-sec); font-size: 14px; line-height: 1.6; margin: 0;">
+                PixelTrade предоставляет техническую возможность для взаимодействия пользователей и не является стороной сделки. Мы не несем ответственности за содержание передаваемых данных, однако обеспечиваем работу системы Арбитража для разрешения споров. Использование сайта означает ваше полное согласие с данными правилами.
+            </p>
+        </div>
+        
+        <section class="rules-section">
+            <h3 class="section-title"><span class="rule-num">1</span> Общие правила</h3>
+            <div class="table-container">
+                <table class="rules-table">
+                    <thead>
+                        <tr>
+                            <th>Нарушение</th>
+                            <th>Санкции</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>1.1. Внешние контакты.</b> Обмен ссылками на сторонние мессенджеры (TG, DS, VK), телефонами или игровыми данными до момента оплаты заказа.</td>
+                            <td>Предупреждение или временная блокировка. При повторном нарушении — бан и заморозка баланса.</td>
+                        </tr>
+                        <tr>
+                            <td><b>1.2. Накрутка и обман.</b> Попытки искусственно поднять рейтинг, шантаж покупателя отзывом или создание поддельных сделок.</td>
+                            <td>Аннулирование отзывов. Блокировка при частых нарушениях.</td>
+                        </tr>
+                        <tr>
+                            <td><b>1.3. Этикет и порядок.</b> Оскорбления, спам, реклама иных ресурсов, грубое поведение в чатах.</td>
+                            <td>Запрет писать в чат или временная блокировка доступа к аккаунту.</td>
+                        </tr>
+                        <tr>
+                            <td><b>1.4. Финансовые махинации.</b> Использование платформы для перевода средств между кошельками, использование краденых карт.</td>
+                            <td>Пожизненный бан и блокировка всех средств на счету.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="rules-section">
+            <h3 class="section-title"><span class="rule-num">2</span> Правила для продавцов</h3>
+            <div class="table-container">
+                <table class="rules-table">
+                    <thead>
+                        <tr>
+                            <th>Нарушение</th>
+                            <th>Санкции</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>2.1. Сделки в обход.</b> Предложение оплатить товар напрямую на личные карты или кошельки, минуя систему PixelTrade.</td>
+                            <td>Перманентная блокировка всех аккаунтов. Отказ в выплатах.</td>
+                        </tr>
+                        <tr>
+                            <td><b>2.2. Преждевременное подтверждение.</b> Просьба подтвердить выполнение заказа до фактической передачи товара/услуги.</td>
+                            <td>Временный бан. Понижение в поисковой выдаче.</td>
+                        </tr>
+                        <tr>
+                            <td><b>2.3. Недобросовестные лоты.</b> Указание ложных цен или описание товаров, которых нет в наличии.</td>
+                            <td>Удаление предложений. Ограничение продаж.</td>
+                        </tr>
+                        <tr>
+                            <td><b>2.4. Запрещенные товары.</b> Продажа взломанных аккаунтов, чужих данных или лотерей (товаров с неопределенным результатом).</td>
+                            <td>Блокировка. Вывод денег будет доступен только через 60 дней после подтверждения личности (паспорта).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="rules-section">
+            <h3 class="section-title"><span class="rule-num">3</span> Ответственность и Арбитраж</h3>
+            <div class="table-container">
+                <table class="rules-table">
+                    <thead>
+                        <tr>
+                            <th>Ситуация</th>
+                            <th>Действие платформы</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>3.1. Утрата доступа.</b> Восстановление проданного аккаунта продавцом или владельцем.</td>
+                            <td><b>Возврат 100%</b> средств покупателю из баланса продавца. Бан продавца.</td>
+                        </tr>
+                        <tr>
+                            <td><b>3.2. Игровые санкции.</b> Блокировка аккаунта администрацией игры из-за факта передачи/покупки.</td>
+                            <td><b>Возврат до 50%</b> (если не доказана вина продавца в использовании сторонних программ и читов).</td>
+                        </tr>
+                        <tr>
+                            <td><b>3.3. Некачественный сервис.</b> Услуга оказана не полностью или нанесен вред игровому имуществу.</td>
+                            <td>Возврат до 100% суммы и компенсация ущерба продавцом.</td>
+                        </tr>
+                        <tr>
+                            <td><b>3.4. Просрочка.</b> Превышение сроков выполнения услуги более чем на 50% от заявленного.</td>
+                            <td>Пропорциональное снижение стоимости в пользу покупателя.</td>
+                        </tr>
+                        <tr>
+                            <td><b>3.5. Бездействие.</b> Продавец не выходит на связь и не приступает к заказу более 24 часов после оплаты.</td>
+                            <td><b>Возврат 100%</b> средств покупателю по запросу в техподдержку.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="rules-footer-info" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div class="info-item" style="background: rgba(var(--primary-rgb), 0.05); border: 1px solid var(--border); padding: 20px; border-radius: 15px; display: flex; gap: 15px;">
+                <i class="fas fa-video" style="color: var(--primary); font-size: 20px; margin-top: 5px;"></i>
+                <p style="color: var(--text-sec); font-size: 14px; line-height: 1.5; margin: 0;">
+                    <strong style="color: #fff; display: block; margin-bottom: 5px;">Доказательная база</strong>
+                    Для защиты своих интересов в спорах продавцам рекомендуется записывать видео процесса передачи товара. Арбитраж вправе запросить запись для подтверждения выполнения заказа.
+                </p>
+            </div>
+            <div class="info-item" style="background: rgba(var(--primary-rgb), 0.05); border: 1px solid var(--border); padding: 20px; border-radius: 15px; display: flex; gap: 15px;">
+                <i class="fas fa-user-check" style="color: var(--primary); font-size: 20px; margin-top: 5px;"></i>
+                <p style="color: var(--text-sec); font-size: 14px; line-height: 1.5; margin: 0;">
+                    <strong style="color: #fff; display: block; margin-bottom: 5px;">Решения Арбитража</strong>
+                    Вердикт Арбитража является финальным. Пересмотр дела возможен только в исключительных случаях при предоставлении новых фактов, которые не были учтены ранее.
+                </p>
+            </div>
+            <div class="info-item" style="background: rgba(244, 67, 54, 0.05); border: 1px solid rgba(244, 67, 54, 0.2); padding: 20px; border-radius: 15px; display: flex; gap: 15px; grid-column: 1 / -1;">
+                <i class="fas fa-eye" style="color: #f44336; font-size: 20px; margin-top: 5px;"></i>
+                <p style="color: var(--text-sec); font-size: 14px; line-height: 1.5; margin: 0;">
+                    <strong style="color: #fff; display: block; margin-bottom: 5px;">Контроль качества</strong>
+                    Администрация оставляет за собой право на проведение контрольных закупок. Мы можем связываться с продавцами под видом обычных покупателей для проверки соблюдения регламента платформы.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 50px;">
+        <a href="{{ url_for('index') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> На главную страницу
+        </a>
+    </div>
+</div>
+
+<style>
+    .section-title {
+        font-size: 24px;
+        color: #fff;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .table-container {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    .rules-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+    .rules-table th {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--primary);
+        padding: 15px 20px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .rules-table td {
+        padding: 18px 20px;
+        color: var(--text-sec);
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+    .rules-table tr:last-child td { border-bottom: none; }
+    .rules-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
+    
+    .rule-num {
+        background: var(--primary);
+        color: #000;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 18px;
+    }
+
+    .back-link {
+        text-decoration: none;
+        color: var(--primary);
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 25px;
+        background: rgba(var(--primary-rgb), 0.1);
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+    .back-link:hover { background: var(--primary); color: #000; }
+</style>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="chat-list-container">
+    <div class="chat-list-header">
+        <h2><i class="fas fa-comments"></i> Ваши диалоги</h2>
+        <span class="chat-count">{{ chats|length }} чатов</span>
+    </div>
+
+    <div class="chat-items">
+        {% for chat in chats %}
+            {% set recipient = chat.user2 if chat.user1_id == current_user.id else chat.user1 %}
+            <a href="{{ url_for('chat', chat_id=chat.id) }}" class="chat-item-link">
+                <div class="chat-item">
+                    <div class="chat-item-avatar">
+                        <img src="{{ url_for('static', filename='avatars/' + (recipient.avatar if recipient.avatar else 'default.png')) }}" alt="Avatar">
+                        <span class="online-status-dot"></span>
+                    </div>
+                    
+                    <div class="chat-item-info">
+                        <div class="chat-item-top">
+                            <span class="chat-user-name">{{ recipient.username }}</span>
+                            <span class="chat-last-time">недавно</span>
+                        </div>
+                        <div class="chat-item-bottom">
+                            <p class="chat-preview">Нажмите, чтобы открыть переписку...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-item-action">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </a>
+        {% else %}
+            <div class="empty-chats">
+                <i class="fas fa-comment-slash"></i>
+                <p>У вас пока нет активных чатов.</p>
+                <a href="{{ url_for('index') }}" class="btn">Найти товары</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

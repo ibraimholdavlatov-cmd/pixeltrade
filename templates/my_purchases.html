@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .purchases-page {
+        padding: 40px 0;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .purchase-item {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+        margin-bottom: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        transition: transform 0.2s, border-color 0.2s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .purchase-item:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+    }
+    .purchase-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+    .purchase-main {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+    .purchase-img {
+        width: 90px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 16px;
+        border: 2px solid var(--border);
+    }
+    .purchase-info h3 {
+        margin: 0 0 8px 0;
+        font-size: 20px;
+        font-weight: 700;
+    }
+    .purchase-meta {
+        font-size: 14px;
+        color: var(--text-sec);
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+    .purchase-price {
+        text-align: right;
+        min-width: 120px;
+    }
+    .price-tag {
+        font-size: 22px;
+        font-weight: 900;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
+    
+    .btn-action {
+        font-size: 14px;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none !important;
+    }
+    .btn-outline {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        color: #fff;
+    }
+    .btn-outline:hover {
+        background: rgba(255,255,255,0.08);
+        border-color: #fff;
+    }
+    .btn-confirm {
+        background: linear-gradient(135deg, #ffc107, #ff9800);
+        color: #000;
+        border: none;
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+    }
+    .btn-confirm:hover {
+        transform: scale(1.03);
+        box-shadow: 0 6px 15px rgba(255, 152, 0, 0.4);
+    }
+
+    .status-banner {
+        padding: 14px 20px;
+        border-radius: 14px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .status-paid { 
+        background: rgba(255, 193, 7, 0.08); 
+        color: #ffc107; 
+        border: 1px solid rgba(255, 193, 7, 0.2);
+    }
+    .status-completed { 
+        background: rgba(40, 167, 69, 0.08); 
+        color: #2ecc71; 
+        border: 1px solid rgba(40, 167, 69, 0.2);
+    }
+
+    .review-box {
+        background: rgba(255,255,255,0.03);
+        padding: 20px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+    }
+    .review-textarea {
+        width: 100%;
+        background: rgba(0,0,0,0.2);
+        border: 1px solid var(--border);
+        color: #fff;
+        border-radius: 12px;
+        padding: 12px;
+        font-size: 14px;
+        margin-bottom: 12px;
+        resize: none;
+    }
+    .review-textarea:focus {
+        border-color: var(--primary);
+        outline: none;
+    }
+    
+    .action-icon {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.05);
+        color: var(--text-sec);
+        margin-left: 8px;
+        cursor: pointer;
+        transition: 0.2s;
+        border: none;
+    }
+    .action-icon:hover { background: var(--primary); color: #000; }
+    .icon-delete:hover { background: #ff4d4d; color: #fff; }
+
+    .purchases-page a { text-decoration: none !important; }
+</style>
+
+<div class="purchases-page">
+    <div style="margin-bottom: 35px; display: flex; align-items: center; gap: 20px;">
+        <a href="{{ url_for('profile_center') }}" class="btn-action btn-outline">
+            <i class="fas fa-chevron-left"></i> В профиль
+        </a>
+        <h1 style="margin: 0; font-weight: 800;">Мои покупки</h1>
+    </div>
+
+    <div class="purchases-list">
+        {% for order in purchases %}
+        <div class="purchase-item">
+            <div class="purchase-top">
+                <div class="purchase-main">
+                    <img src="{{ url_for('static', filename='product_images/' + order.product.image) }}" class="purchase-img">
+                    <div class="purchase-info">
+                        <h3>{{ order.product.short_description }}</h3>
+                        <div class="purchase-meta">
+                            <span><i class="far fa-calendar-alt"></i> {{ order.created_at | human_date }}</span>
+                            <span style="opacity: 0.3;">|</span>
+                            <span>Продавец: <strong style="color: #fff;">{{ order.product.user.username }}</strong></span>
+                        </div>
+                        <div style="margin-top: 12px;">
+                            <span class="badge-method" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary); padding: 5px 10px; border-radius: 8px; font-weight: 600;">
+                                <i class="fas fa-wallet"></i> {{ order.payment_method }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="purchase-price">
+                    <div class="price-tag">{{ order.price_at_purchase | format_price }}</div>
+                    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                        <form action="{{ url_for('start_chat', user_id=order.seller_id) }}" method="POST" style="margin: 0;">
+                            <button type="submit" class="btn-action btn-outline">
+                                <i class="fas fa-comment"></i>
+                            </button>
+                        </form>
+                        <a href="{{ url_for('product_detail', product_id=order.product.id) }}" class="btn-action btn-outline">
+                            Товар
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {% if order.status == 'paid' %}
+            <div class="status-banner status-paid">
+                <span><i class="fas fa-hourglass-half"></i> Ожидает вашего подтверждения</span>
+                <form action="{{ url_for('confirm_order', order_id=order.id) }}" method="POST" style="margin:0;">
+                    <button type="submit" class="btn-action btn-confirm">
+                        Подтвердить получение
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div class="status-banner status-completed">
+                <span><i class="fas fa-check-double"></i> Сделка завершена успешно</span>
+                <span style="font-size: 12px; opacity: 0.7;">Средства отправлены продавцу</span>
+            </div>
+
+            <div class="review-box">
+                {% if not order.review %}
+                <h4 style="margin: 0 0 15px 0; font-size: 15px; color: var(--text-sec);">Ваш отзыв о сделке:</h4>
+                <form action="{{ url_for('leave_review', order_id=order.id) }}" method="POST">
+                    <div style="margin-bottom: 12px;">
+                        <select name="rating" class="star-select" style="width: 100%; padding: 10px; border-radius: 10px;" required>
+                            <option value="5">⭐⭐⭐⭐⭐ Великолепно (5)</option>
+                            <option value="4">⭐⭐⭐⭐ Хорошо (4)</option>
+                            <option value="3">⭐⭐⭐ Средне (3)</option>
+                            <option value="2">⭐⭐ Плохо (2)</option>
+                            <option value="1">⭐ Ужасно (1)</option>
+                        </select>
+                    </div>
+                    <textarea name="text" class="review-textarea" placeholder="Расскажите другим покупателям о вашем опыте..." rows="3"></textarea>
+                    <button type="submit" class="btn-action" style="background: var(--primary); color: #000; width: 100%; justify-content: center;">
+                        Опубликовать отзыв
+                    </button>
+                </form>
+                {% else %}
+                <div id="display-review-{{ order.id }}">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="color: #ffc107; font-size: 18px;">
+                            {% for i in range(order.review.rating) %}⭐{% endfor %}
+                        </span>
+                        <div>
+                            <span class="action-icon" onclick="toggleEdit('{{ order.id }}')"><i class="fas fa-pen"></i></span>
+                            <form action="{{ url_for('delete_review', review_id=order.review.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="action-icon icon-delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <p style="margin: 0; line-height: 1.6; color: #fff; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border-left: 3px solid var(--primary);">
+                        "{{ order.review.text }}"
+                    </p>
+                </div>
+
+                <div id="edit-review-{{ order.id }}" style="display: none;">
+                    <form action="{{ url_for('edit_review', review_id=order.review.id) }}" method="POST">
+                        <select name="rating" class="star-select" style="width: 100%; margin-bottom: 12px; padding: 10px; border-radius: 10px;" required>
+                            <option value="5" {% if order.review.rating == 5 %}selected{% endif %}>⭐⭐⭐⭐⭐ (5)</option>
+                            <option value="4" {% if order.review.rating == 4 %}selected{% endif %}>⭐⭐⭐⭐ (4)</option>
+                            <option value="3" {% if order.review.rating == 3 %}selected{% endif %}>⭐⭐⭐ (3)</option>
+                            <option value="2" {% if order.review.rating == 2 %}selected{% endif %}>⭐⭐ (2)</option>
+                            <option value="1" {% if order.review.rating == 1 %}selected{% endif %}>⭐ (1)</option>
+                        </select>
+                        <textarea name="text" class="review-textarea" rows="3">{{ order.review.text }}</textarea>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn-action" style="background: var(--primary); color: #000; flex: 1; justify-content: center;">Сохранить изменения</button>
+                            <button type="button" onclick="toggleEdit('{{ order.id }}')" class="btn-action btn-outline" style="flex: 1; justify-content: center;">Отмена</button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 80px 40px; background: var(--bg-card); border-radius: 30px; border: 2px dashed var(--border);">
+            <div style="background: rgba(255,255,255,0.03); width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px;">
+                <i class="fas fa-shopping-bag" style="font-size: 40px; color: var(--border);"></i>
+            </div>
+            <h2 style="color: #fff; margin-bottom: 10px;">История покупок пуста</h2>
+            <p style="color: var(--text-sec); margin-bottom: 30px; font-size: 16px;">Похоже, вы еще не выбрали ничего интересного.</p>
+            <a href="{{ url_for('index') }}" class="btn-action" style="background: var(--primary); color: #000; padding: 15px 40px; font-size: 16px;">
+                Начать шоппинг
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function toggleEdit(orderId) {
+        const displayDiv = document.getElementById('display-review-' + orderId);
+        const editDiv = document.getElementById('edit-review-' + orderId);
+        if (displayDiv.style.display === 'none') {
+            displayDiv.style.display = 'block';
+            editDiv.style.display = 'none';
+        } else {
+            displayDiv.style.display = 'none';
+            editDiv.style.display = 'block';
+        }
+    }
+</script>
+{% endblock %}

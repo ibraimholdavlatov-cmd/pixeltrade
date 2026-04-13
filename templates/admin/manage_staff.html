@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Управление персоналом (Владелец)</h2>
+    <hr>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Назначить роль пользователю</h5>
+            <form method="POST">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-5">
+                        <input type="text" name="username" class="form-control" placeholder="Введите никнейм (например, mersiyan)" required>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="role" class="form-select">
+                            <option value="user">Пользователь (User)</option>
+                            <option value="admin">Администратор (Admin)</option>
+                            <option value="owner">Владелец (Owner)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100">Применить</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Действующий состав администрации</h4>
+        <div style="max-width: 300px;">
+            <input type="text" id="staffSearch" class="form-control" placeholder="Поиск по никнейму...">
+        </div>
+    </div>
+
+    <table class="table table-hover mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Никнейм</th>
+                <th>Текущая роль</th>
+            </tr>
+        </thead>
+        <tbody id="staffTable">
+            {% for person in staff %}
+            <tr>
+                <td>{{ person.id }}</td>
+                <td>{{ person.username }}</td>
+                <td>
+                    <span class="badge {% if person.role == 'owner' or person.username == 'mersiyan' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                        {{ person.role }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.getElementById('staffSearch').addEventListener('keyup', function() {
+    let filter = this.value.toLowerCase();
+    let rows = document.querySelectorAll('#staffTable tr');
+    rows.forEach(row => {
+        let text = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}

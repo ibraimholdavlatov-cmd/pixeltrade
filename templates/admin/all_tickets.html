@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+div class=container mt-5
+    h2Все обращения в поддержкуh2
+    table class=table mt-4
+        thead
+            tr
+                thДатаth
+                thПользовательth
+                thТемаth
+                thСтатусth
+                thДействиеth
+            tr
+        thead
+        tbody
+            {% for ticket in tickets %}
+            tr
+                td{{ ticket.created_at.strftime('%d.%m %H%M') }}td
+                td{{ ticket.user.username }}td
+                td{{ ticket.subject }}td
+                td
+                    {% if ticket.status == 'Open' %}
+                        span class=badge bg-successОткрытspan
+                    {% elif ticket.status == 'In Progress' %}
+                        span class=badge bg-primaryВ работеspan
+                    {% else %}
+                        span class=badge bg-secondaryЗакрытspan
+                    {% endif %}
+                td
+                td
+                    a href={{ url_for('view_ticket', ticket_id=ticket.id) }} class=btn btn-sm btn-outline-darkОткрыть чатa
+                td
+            tr
+            {% endfor %}
+        tbody
+    table
+div
+{% endblock %}

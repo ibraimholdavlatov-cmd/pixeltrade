@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}Выставить товар — PixelTrade{% endblock %}
+
+{% block content %}
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+        min-height: 80vh;
+    }
+    
+    .auth-box {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 40px;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    .auth-icon {
+        width: 60px; height: 60px;
+        background: rgba(var(--primary-rgb), 0.1);
+        color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin: 0 auto 20px auto;
+    }
+
+    h2 { text-align: center; margin: 0 0 10px 0; font-size: 28px; color: #fff; }
+    .auth-subtitle { text-align: center; color: var(--text-sec); margin-bottom: 30px; font-size: 14px; }
+
+    .field-label {
+        display: block;
+        color: var(--text-sec);
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        margin-left: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .input-wrapper { margin-bottom: 20px; }
+
+    .input-field {
+        position: relative;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+    }
+    
+    .input-field:focus-within {
+        border-color: var(--primary);
+        background: rgba(255,255,255,0.08);
+    }
+
+    .input-field i.field-icon {
+        position: absolute;
+        left: 15px;
+        color: var(--text-sec);
+        width: 20px;
+        text-align: center;
+        font-size: 16px;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .input-field input, .input-field textarea, .input-field select {
+        background: transparent !important;
+        border: none;
+        outline: none;
+        color: #fff;
+        width: 100%;
+        font-size: 15px;
+        font-family: inherit;
+        padding-left: 45px; 
+        padding-right: 15px;
+    }
+
+    .input-field input, .input-field select { height: 50px; }
+    .input-field select { cursor: pointer; appearance: none; }
+    .input-field select option { background-color: #1a1c23; color: #fff; }
+
+    .input-field.textarea-box { align-items: flex-start; padding-top: 15px; }
+    .input-field.textarea-box textarea { min-height: 120px; line-height: 1.5; resize: none; }
+    .input-field.textarea-box i.field-icon { top: 18px; }
+
+    .fa-chevron-down {
+        position: absolute; right: 15px; font-size: 12px; opacity: 0.5; pointer-events: none;
+    }
+
+    /* --- УБИРАЕМ СТРЕЛКИ У ПОЛЯ ЦЕНЫ --- */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+    /* --- СТИЛИ ЗАГРУЗКИ И ПРЕВЬЮ --- */
+    .file-upload-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .file-upload-label {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        padding: 30px; background: rgba(255,255,255,0.02); border: 2px dashed var(--border);
+        border-radius: 16px; cursor: pointer; transition: 0.3s; text-align: center;
+        min-height: 160px;
+    }
+    .file-upload-label:hover { border-color: var(--primary); background: rgba(var(--primary-rgb), 0.05); }
+
+    #preview-container {
+        display: none;
+        position: relative;
+        width: 100%;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        background: #000;
+    }
+
+    #preview-image {
+        width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+        display: block;
+    }
+
+    .remove-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 35px;
+        height: 35px;
+        background: rgba(255, 68, 68, 0.9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .remove-btn:hover { background: #ff4444; transform: scale(1.1); }
+
+    .upload-status {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 10px;
+        color: #4ade80;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .btn-large {
+        width: 100%; padding: 18px; background: var(--primary); color: #000;
+        border: none; border-radius: 12px; font-weight: 800; font-size: 16px;
+        cursor: pointer; transition: 0.2s; text-transform: uppercase; margin-top: 10px;
+    }
+    .btn-large:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(var(--primary-rgb), 0.3); }
+</style>
+
+<div class="auth-container">
+    <div class="auth-box">
+        <div class="auth-icon"><i class="fas fa-tag"></i></div>
+        <h2>Новое объявление</h2>
+        <p class="auth-subtitle">Создайте карточку вашего товара</p>
+
+        <form method="POST" enctype="multipart/form-data">
+            
+            <div class="input-wrapper">
+                <label class="field-label">Название товара</label>
+                <div class="input-field">
+                    <i class="fas fa-heading field-icon"></i>
+                    <input type="text" name="short_description" placeholder="Напр: Аккаунт Steam 50 игр" required maxlength="100">
+                </div>
+            </div>
+            
+            <div class="input-wrapper">
+                <label class="field-label">Подробное описание</label>
+                <div class="input-field textarea-box">
+                    <i class="fas fa-align-left field-icon"></i>
+                    <textarea name="description" placeholder="Опишите все преимущества и детали..." required></textarea>
+                </div>
+            </div>
+
+            <div class="input-wrapper">
+                <label class="field-label">Категория</label>
+                <div class="input-field">
+                    <i class="fas fa-list field-icon"></i>
+                    <select name="category" required>
+                        <option value="" disabled selected>Выберите категорию...</option>
+                        <option value="Валюта">Валюта</option>
+                        <option value="Аккаунты">Аккаунты</option>
+                        <option value="Предметы">Предметы</option>
+                        <option value="Услуги">Услуги</option>
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+
+            <div class="input-wrapper">
+                <label class="field-label">Стоимость</label>
+                <div class="input-field">
+                    <i class="fas fa-ruble-sign field-icon"></i>
+                    <input type="number" name="price" step="0.01" placeholder="Введите сумму в RUB" required>
+                </div>
+            </div>
+
+            <div class="input-wrapper">
+                <label class="field-label">Изображение товара</label>
+                <div class="file-upload-wrapper">
+                    <input type="file" name="image" accept="image/*" required id="file-input-real" style="display: none;">
+                    
+                    <label for="file-input-real" class="file-upload-label" id="drop-zone">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: var(--primary); margin-bottom: 12px;"></i>
+                        <span style="font-size: 15px; color: #fff;">Кликните для выбора фото</span>
+                    </label>
+
+                    <div id="preview-container">
+                        <img id="preview-image" src="">
+                        <button type="button" class="remove-btn" onclick="removeFile(event)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="upload-status" id="upload-status">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Фото товара загружено</span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-large">Опубликовать объявление</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('file-input-real');
+    const dropZone = document.getElementById('drop-zone');
+    const previewContainer = document.getElementById('preview-container');
+    const previewImage = document.getElementById('preview-image');
+    const uploadStatus = document.getElementById('upload-status');
+
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                
+                // Переключаем видимость
+                dropZone.style.display = 'none';
+                previewContainer.style.display = 'block';
+                uploadStatus.style.display = 'flex';
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function removeFile(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        fileInput.value = ""; // Очищаем файл
+        dropZone.style.display = 'flex';
+        previewContainer.style.display = 'none';
+        uploadStatus.style.display = 'none';
+        previewImage.src = "";
+    }
+</script>
+{% endblock %}

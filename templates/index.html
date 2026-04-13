@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* ТОТ САМЫЙ БАННЕР */
+    .hero {
+        position: relative;
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        /* ИСПРАВЛЕНО: .png вместо .jpg и путь к папке images */
+        background: #1a1c23 url("{{ url_for('static', filename='images/hero-bg.png') }}") no-repeat center center;
+        background-size: cover;
+    }
+    .hero-overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        /* Уменьшил плотность градиента, чтобы картинку было лучше видно */
+        background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+        z-index: 1;
+    }
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: white;
+        text-shadow: 0 4px 12px rgba(0,0,0,0.8);
+    }
+    .hero h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .hero p { font-size: 1.2rem; opacity: 0.9; margin-bottom: 20px; }
+    .hero-stats { display: flex; justify-content: center; gap: 20px; font-size: 14px; font-weight: 600; }
+    .hero-stats span i { color: var(--primary); margin-right: 5px; }
+
+    /* КАТЕГОРИИ */
+    .categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    .category-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        text-decoration: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    .category-card i {
+        font-size: 20px;
+        margin-bottom: 8px;
+        color: var(--primary);
+    }
+    .category-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .category-card.active {
+        background: var(--primary);
+        border-color: var(--primary);
+    }
+    .category-card.active i, .category-card.active span {
+        color: white !important;
+    }
+
+    /* ПОИСК */
+    .search-container { margin-bottom: 30px; }
+    .search-form { display: flex; gap: 10px; align-items: center; }
+    .search-input-wrapper { flex: 1; position: relative; }
+    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
+    .modern-input { width: 100%; padding: 12px 12px 12px 40px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; color: white; border: 1px solid var(--border); }
+    .modern-select { padding: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; color: white; cursor: pointer; }
+    .reset-btn { background: #ff4757; color: white; padding: 12px 15px; border-radius: 10px; text-decoration: none; display: flex; align-items: center; justify-content: center; }
+</style>
+
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1>PixelTrade</h1>
+        <p>Безопасная площадка для покупки и продажи игровых ценностей.</p>
+        <div class="hero-stats">
+            <span><i class="fas fa-check-circle"></i> 100% Защита</span>
+            <span><i class="fas fa-bolt"></i> Быстрая доставка</span>
+            <span><i class="fas fa-users"></i> Тысячи продавцов</span>
+        </div>
+    </div>
+</section>
+
+<div class="search-container">
+    <form action="{{ url_for('index') }}" method="get" class="search-form">
+        <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" name="q" placeholder="Поиск товаров..." value="{{ request.args.get('q', '') }}" class="modern-input">
+        </div>
+        
+        <div class="select-wrapper">
+            <select name="sort" onchange="this.form.submit()" class="modern-select">
+                <option value="new" {% if request.args.get('sort') == 'new' %}selected{% endif %}>Новые</option>
+                <option value="cheap" {% if request.args.get('sort') == 'cheap' %}selected{% endif %}>Дешевле</option>
+                <option value="expensive" {% if request.args.get('sort') == 'expensive' %}selected{% endif %}>Дороже</option>
+            </select>
+        </div>
+        
+        {% if request.args.get('q') or request.args.get('sort') or request.args.get('category') %}
+            <a href="{{ url_for('index') }}" class="reset-btn" title="Сбросить фильтры">
+                <i class="fas fa-times"></i>
+            </a>
+        {% endif %}
+    </form>
+</div>
+
+<section class="categories">
+    <a href="{{ url_for('index', category='Валюта') }}" class="category-card {% if request.args.get('category') == 'Валюта' %}active{% endif %}">
+        <i class="fas fa-coins"></i><span>Валюта</span>
+    </a>
+    <a href="{{ url_for('index', category='Аккаунты') }}" class="category-card {% if request.args.get('category') == 'Аккаунты' %}active{% endif %}">
+        <i class="fas fa-user-shield"></i><span>Аккаунты</span>
+    </a>
+    <a href="{{ url_for('index', category='Предметы') }}" class="category-card {% if request.args.get('category') == 'Предметы' %}active{% endif %}">
+        <i class="fas fa-magic"></i><span>Предметы</span>
+    </a>
+    <a href="{{ url_for('index', category='Услуги') }}" class="category-card {% if request.args.get('category') == 'Услуги' %}active{% endif %}">
+        <i class="fas fa-level-up-alt"></i><span>Услуги</span>
+    </a>
+</section>
+
+<div class="catalog-header" style="margin-bottom: 20px;">
+    <h2 style="font-weight: 800;">
+        <i class="fas fa-fire" style="color: #ff4757;"></i> 
+        {% if request.args.get('category') %}
+            Категория: {{ request.args.get('category') }}
+        {% else %}
+            Свежие предложения
+        {% endif %}
+    </h2>
+</div>
+
+<div class="products-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+    {% for product in products %}
+    <div class="product-item" style="display: flex; flex-direction: column; height: 100%; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.2s;">
+        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-link" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
+            <div class="product-img-container" style="height: 180px; width: 100%; position: relative; background: #000;">
+                <img src="{{ url_for('static', filename='product_images/' + product.image) }}" 
+                     alt="{{ product.short_description }}" 
+                     style="width: 100%; height: 100%; object-fit: cover;">
+                <span class="category-tag" style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 6px; font-size: 11px; color: #fff;">{{ product.category }}</span>
+            </div>
+            
+            <div class="product-info" style="padding: 15px; display: flex; flex-direction: column; flex-grow: 1;">
+                <div class="seller-line" style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 13px; color: var(--text-sec);">
+                    <img src="{{ url_for('static', filename='avatars/' + (product.user.avatar if product.user.avatar else 'default.png')) }}" 
+                         class="mini-avatar" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;">
+                    <span>{{ product.user.username }}</span>
+                </div>
+                
+                <strong class="product-title" style="font-size: 16px; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 44px; line-height: 1.4;">
+                    {{ product.short_description }}
+                </strong>
+                
+                <div class="price-line" style="margin-top: auto; display: flex; align-items: center; justify-content: space-between;">
+                    <span class="price-value" style="font-size: 18px; font-weight: bold; color: var(--primary);">{{ product.price | format_price }}</span>
+                    <span class="date-value" style="font-size: 11px; color: #888;">{{ product.created_at | human_date }}</span>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% else %}
+    <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: var(--text-sec);">
+        <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 15px;"></i>
+        <p>Товаров в этой категории пока нет.</p>
+        <a href="{{ url_for('index') }}" class="btn" style="color: var(--primary);">Ко всем товарам</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

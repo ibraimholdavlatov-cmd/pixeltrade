@@ -1,0 +1,11 @@
+<h1>Каталог товаров</h1>
+<ul>
+{% for product in products %}
+    <li>
+        <img src="{{ url_for('static', filename='product_images/' + product.image) }}" width="100">
+        <strong>{{ product.name }}</strong> — {{ product.price }}₽<br>
+        {{ product.description }}<br>
+        Продавец: {{ product.user.username }}
+    </li>
+{% endfor %}
+</ul>

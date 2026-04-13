@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .profile-container { 
+        padding: 40px 0; 
+        max-width: 600px; 
+        margin: 0 auto; 
+    }
+    
+    .profile-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .profile-header { text-align: center; margin-bottom: 30px; }
+    .profile-header h1 { margin-bottom: 10px; font-size: 26px; }
+    .profile-header p { color: var(--text-sec); font-size: 14px; }
+
+    .avatar-upload-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .avatar-preview-container {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin-bottom: 15px;
+    }
+
+    .large-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--primary);
+    }
+
+    .upload-badge {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: var(--primary);
+        color: #000;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+        border: 3px solid var(--bg-card);
+    }
+    .upload-badge:hover { transform: scale(1.1); }
+
+    .username-display {
+        font-size: 18px;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .input-group {
+        margin-bottom: 20px;
+    }
+
+    .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: var(--text-sec);
+        font-weight: 600;
+    }
+    .input-group label i { margin-right: 5px; color: var(--primary); }
+
+    .modern-input, .modern-textarea {
+        width: 100%;
+        padding: 12px 15px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: #fff;
+        font-size: 15px;
+        transition: 0.3s;
+        box-sizing: border-box;
+        -webkit-appearance: none;
+    }
+
+    /* ХАК ОТ БЕЛЫХ РАМОК ДЛЯ ПРОФИЛЯ */
+    .modern-input:-webkit-autofill,
+    .modern-input:-webkit-autofill:hover, 
+    .modern-input:-webkit-autofill:focus, 
+    .modern-input:-webkit-autofill:active,
+    .modern-textarea:-webkit-autofill {
+        transition: background-color 5000s ease-in-out 0s;
+        -webkit-text-fill-color: #fff !important;
+        caret-color: #fff;
+    }
+
+    .modern-textarea {
+        min-height: 100px;
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    .modern-input:focus, .modern-textarea:focus {
+        border-color: var(--primary);
+        background: rgba(255, 255, 255, 0.07);
+        outline: none;
+    }
+
+    .modern-input.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background: rgba(255, 255, 255, 0.01);
+    }
+
+    .input-group small {
+        display: block;
+        margin-top: 6px;
+        color: var(--text-sec);
+        font-size: 12px;
+        opacity: 0.7;
+    }
+
+    .btn-save {
+        width: 100%;
+        padding: 14px;
+        background: var(--primary);
+        color: #000;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-top: 10px;
+    }
+    .btn-save:hover { opacity: 0.9; transform: translateY(-2px); }
+</style>
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <h1>Настройки профиля</h1>
+            <p>Управляйте своими данными и внешним видом на площадке</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="profile-form">
+            <div class="profile-main-section">
+                <div class="avatar-upload-section">
+                    <div class="avatar-preview-container">
+                        <img src="{{ url_for('static', filename='avatars/' + (user.avatar if user.avatar else 'default.png')) }}" 
+                             alt="Avatar" id="avatar-preview" class="large-avatar">
+                        <label for="avatar-input" class="upload-badge">
+                            <i class="fas fa-camera"></i>
+                        </label>
+                    </div>
+                    <input type="file" name="avatar" id="avatar-input" accept="image/*" style="display: none;">
+                    <span class="username-display">@{{ user.username }}</span>
+                </div>
+
+                <div class="profile-inputs">
+                    <div class="input-group">
+                        <label><i class="fas fa-id-card"></i> Имя пользователя</label>
+                        <input type="text" value="{{ user.username }}" disabled class="modern-input disabled">
+                        <small>Имя пользователя нельзя изменить</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label><i class="fas fa-quote-left"></i> О себе (описание)</label>
+                        <textarea name="description" placeholder="Расскажите о себе или своих гарантиях..." 
+                                  class="modern-textarea">{{ user.description }}</textarea>
+                    </div>
+
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i> Сохранить изменения
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('avatar-input').onchange = function (evt) {
+        var tgt = evt.target || window.event.srcElement,
+            files = tgt.files;
+        if (FileReader && files && files.length) {
+            var fr = new FileReader();
+            fr.onload = function () {
+                document.getElementById('avatar-preview').src = fr.result;
+            }
+            fr.readAsDataURL(files[0]);
+        }
+    }
+</script>
+{% endblock %}

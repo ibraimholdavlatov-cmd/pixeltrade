@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .sales-page { padding: 40px 0; max-width: 850px; margin: 0 auto; }
+    .sale-item {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: 0.3s;
+    }
+    .sale-item:hover { border-color: var(--primary); }
+    .sale-info h3 { margin: 0 0 5px 0; font-size: 18px; color: #fff; }
+    .sale-status { font-size: 12px; padding: 5px 12px; border-radius: 8px; font-weight: 600; }
+    .status-paid { background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.2); }
+    .status-completed { background: rgba(40, 167, 69, 0.1); color: #2ecc71; border: 1px solid rgba(40, 167, 69, 0.2); }
+    
+    .price-tag-sales { font-weight: 900; color: var(--primary); font-size: 18px; margin-bottom: 5px; }
+</style>
+
+<div class="sales-page">
+    <div style="margin-bottom: 30px; display: flex; align-items: center; gap: 15px;">
+        <a href="{{ url_for('profile_center') }}" style="color: var(--text-sec); text-decoration: none; font-size: 14px;">
+            <i class="fas fa-arrow-left"></i> Назад в кабинет
+        </a>
+        <h1 style="margin: 0; font-size: 28px;">Мои продажи</h1>
+    </div>
+
+    <div class="sales-list">
+        {% for sale in sales %}
+        <div class="sale-item">
+            <div class="sale-info">
+                <h3>{{ sale.product.short_description }}</h3>
+                <div style="color: var(--text-sec); font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                    <i class="far fa-user"></i>
+                    <span>Покупатель ID: <strong>{{ sale.buyer_id }}</strong></span> 
+                    <span style="opacity: 0.3;">•</span>
+                    <span>{{ sale.created_at | human_date }}</span>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div class="price-tag-sales">{{ sale.price_at_purchase | format_price }}</div>
+                {% if sale.status == 'paid' %}
+                    <span class="sale-status status-paid"><i class="fas fa-clock"></i> Оплачено (в холде)</span>
+                {% else %}
+                    <span class="sale-status status-completed"><i class="fas fa-check-circle"></i> Завершено</span>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 80px 20px; background: var(--bg-card); border-radius: 20px; border: 1px dashed var(--border);">
+            <i class="fas fa-hand-holding-usd" style="font-size: 48px; color: var(--border); margin-bottom: 20px;"></i>
+            <h2 style="color: var(--text-sec);">Продаж пока нет</h2>
+            <p style="color: var(--text-sec); opacity: 0.7;">Как только кто-то купит ваш товар, он появится здесь.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

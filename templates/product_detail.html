@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="product-page">
+    <div class="product-media">
+        <div class="main-image-card" style="max-width: 500px; margin: 0 auto; background: var(--bg-card); border-radius: 15px; overflow: hidden; border: 1px solid var(--border);">
+            <img src="{{ url_for('static', filename='product_images/' + product.image) }}" 
+                 alt="{{ product.short_description }}" 
+                 class="detail-img" 
+                 style="width: 100%; max-height: 400px; object-fit: contain; display: block;">
+        </div>
+    </div>
+
+    <div class="product-sidebar">
+        <div class="product-header-info">
+            <h1 class="product-title">{{ product.short_description }}</h1>
+            <div class="product-meta">
+                <span class="category-badge">{{ product.category }}</span>
+                <span class="id-tag">#{{ product.id }}</span>
+                <span class="date-tag"><i class="far fa-calendar-alt"></i> {{ product.created_at | human_date }}</span>
+            </div>
+            <div class="product-price">{{ product.price | format_price }}</div>
+        </div>
+
+        <div class="seller-card">
+            <div class="seller-header">Продавец</div>
+            <div class="seller-body">
+                <a href="{{ url_for('public_profile', user_id=seller.id) }}">
+                    <img src="{{ url_for('static', filename='avatars/' + (seller.avatar if seller.avatar else 'default.png')) }}" class="seller-avatar">
+                </a>
+                <div class="seller-info">
+                    <a href="{{ url_for('public_profile', user_id=seller.id) }}" class="seller-name" style="text-decoration: none; color: inherit; font-weight: bold;">
+                        {{ seller.username }}
+                    </a>
+                    
+                    <div class="seller-rating" style="font-size: 0.9em; margin-top: 3px;">
+                        {% set reviews_count = seller.review_info | length if seller.review_info else 0 %}
+                        {# Примечание: предполагается, что в app.py мы передаем объект seller с доступом к его отзывам #}
+                        {# Для точности лучше использовать расчет из функции public_profile в маршруте #}
+                        
+                        {% if reviews_count >= 10 %}
+                            <span style="color: #ffc107;">⭐ {{ seller.average_rating | round(1) if seller.average_rating else '5.0' }}</span>
+                        {% else %}
+                            <span style="color: var(--text-sec); font-size: 0.85em;">Нет рейтинга</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="seller-actions">
+                {% if current_user.is_authenticated and current_user.id != product.user_id %}
+                    <form method="POST" action="{{ url_for('start_chat', user_id=product.user_id) }}">
+                        <button type="submit" class="btn btn-chat"><i class="fas fa-comment-dots"></i> Написать</button>
+                    </form>
+                {% elif not current_user.is_authenticated %}
+                    <a href="{{ url_for('login') }}" class="btn btn-disabled">Войдите, чтобы написать</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="buy-actions">
+            {% if current_user.is_authenticated %}
+                {% if product.user_id != current_user.id and product.status == 'active' %}
+                    <form action="{{ url_for('buy_product', product_id=product.id) }}" method="POST" style="width: 100%;">
+                        <button type="submit" class="btn btn-primary btn-large" style="width: 100%; margin-bottom: 10px;">Купить сейчас</button>
+                    </form>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-shopping-basket"></i> В корзину</button>
+                {% elif product.status == 'sold' %}
+                    <button class="btn btn-large" style="width: 100%; background: #222; cursor: not-allowed; color: #666;" disabled>Товар продан</button>
+                {% else %}
+                    <button class="btn btn-large" style="width: 100%; background: #222; cursor: not-allowed; color: #666;" disabled>Ваш товар</button>
+                {% endif %}
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" style="display: block; text-align: center; text-decoration: none;">Войдите, чтобы купить</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="product-description-section">
+    <h3><i class="fas fa-align-left"></i> Описание товара</h3>
+    <div class="description-text">
+        {{ product.description }}
+    </div>
+</div>
+{% endblock %}
